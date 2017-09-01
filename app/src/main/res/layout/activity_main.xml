@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.palvision.devicemanager.MainActivity">
+
+    <TextView
+        android:id="@+id/tvBatteryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/battery_level" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:max="100"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBatteryText"
+        android:layout_toRightOf="@+id/tvBatteryText"
+        android:layout_toEndOf="@+id/tvBatteryText" />
+
+    <TextView
+        android:id="@+id/tvCheckConnection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Connection establised !"
+        android:layout_below="@+id/progressBar"
+        android:padding="25dp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvCheckConnection"
+        android:layout_marginTop="34dp"
+        android:text="Message Display" />
+
+    <TextView
+        android:id="@+id/tv_main_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/progressBar"
+        android:layout_alignRight="@+id/progressBar"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="19dp"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/textView2"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tv_main_display"
+        android:layout_marginTop="19dp"
+        android:layout_toLeftOf="@+id/tv_main_display"
+        android:layout_toStartOf="@+id/tv_main_display"
+        android:text="SSID" />
+
+    <TextView
+        android:id="@+id/tv_main_ssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tv_main_display"
+        android:layout_alignLeft="@+id/tv_main_display"
+        android:layout_alignRight="@+id/tv_main_display"
+        android:layout_alignStart="@+id/tv_main_display"
+        android:layout_centerVertical="true"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textView4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/textView4"
+        android:layout_below="@+id/tv_main_ssid"
+        android:layout_marginTop="25dp"
+        android:text="Wifi Level" />
+
+    <TextView
+        android:id="@+id/tv_main_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_below="@+id/textView6"
+        android:layout_alignLeft="@+id/tv_main_ssid"
+        android:layout_alignStart="@+id/tv_main_ssid"
+        android:layout_alignRight="@+id/tv_main_ssid"
+        android:layout_alignEnd="@+id/tv_main_ssid" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textView6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/textView6"
+        android:layout_below="@+id/tv_main_level"
+        android:layout_marginTop="21dp"
+        android:text="Http State" />
+
+    <TextView
+        android:id="@+id/tv_main_httprespone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_below="@+id/textView8"
+        android:layout_alignLeft="@+id/tv_main_level"
+        android:layout_alignStart="@+id/tv_main_level"
+        android:layout_alignRight="@+id/tv_main_level"
+        android:layout_alignEnd="@+id/tv_main_level" />
+
+</RelativeLayout>
