@@ -63,24 +63,25 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="26dp"
+        android:text="SSID"
+        android:layout_below="@+id/tv_main_display"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/tv_main_display"
-        android:layout_marginTop="19dp"
         android:layout_toLeftOf="@+id/tv_main_display"
-        android:layout_toStartOf="@+id/tv_main_display"
-        android:text="SSID" />
+        android:layout_toStartOf="@+id/tv_main_display" />
 
     <TextView
         android:id="@+id/tv_main_ssid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/tv_main_display"
+        android:text="TextView"
+        android:layout_below="@+id/textView4"
         android:layout_alignLeft="@+id/tv_main_display"
-        android:layout_alignRight="@+id/tv_main_display"
         android:layout_alignStart="@+id/tv_main_display"
-        android:layout_centerVertical="true"
-        android:text="TextView" />
+        android:layout_marginTop="22dp"
+        android:layout_alignRight="@+id/tv_main_display"
+        android:layout_alignEnd="@+id/tv_main_display" />
 
     <TextView
         android:id="@+id/textView6"

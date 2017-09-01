@@ -24,20 +24,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -59,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     String  mSSID, mSDisplayLevel, mSHttpResponse;
     Context context;
 
-    Boolean b, mHttpState;
+    Integer mHttpState;
     int level, wifiLevel;
 
     WifiConfiguration wifiConfig;
@@ -69,34 +77,36 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         context = getApplicationContext();
 
         mBatteryLevelText = (TextView) findViewById(R.id.tvBatteryText);
         mCheckConnection = (TextView) findViewById(R.id.tvCheckConnection);
 
         mBatteryLevelProgress = (ProgressBar) findViewById(R.id.progressBar);
-        mReceiver = new BatteryBroadcastReceiver();
-        mNetworkReceiver = new NetworkChangeReceiver();
+    //    mReceiver = new BatteryBroadcastReceiver();
+    //    mNetworkReceiver = new NetworkChangeReceiver();
+
 
         final Handler handler = new Handler();
 
         final Runnable r = new Runnable() {
             public void run() {
-                b = isOnline();
-                System.out.println(b);
 
                 initUI();
+                testRequest();
 
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 10000);
             }
         };
 
-        handler.postDelayed(r, 1000);
+        handler.postDelayed(r, 5000);
 
     }
 
-    @Override
+  /*  @Override
     protected void onStart() {
+
         registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -105,14 +115,8 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
         super.onStart();
-    }
-    @Override
-    protected void onStop() {
-        unregisterReceiver(mReceiver);
-//        unregisterReceiver(mNetworkReceiver);
-        super.onStop();
-    }
-
+    }*/
+/*
     public class BatteryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -120,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
                 mBatteryLevelText.setText(getString(R.string.battery_level) + " " + level);
                 mBatteryLevelProgress.setProgress(level);
         }
-    }
+    }*/
 
-    public class NetworkChangeReceiver extends BroadcastReceiver {
+ /*   public class NetworkChangeReceiver extends BroadcastReceiver {
             @Override
             public void onReceive(Context context, Intent intent) {
 
@@ -160,9 +164,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return inetAddress != null && !inetAddress.equals("");
             }
-        }
+        }*/
 
-    public static void dialog(boolean value){
+/*    public static void dialog(boolean value){
 
         if(value){
             mCheckConnection.setText("We are back !!!");
@@ -183,9 +187,9 @@ public class MainActivity extends AppCompatActivity {
             mCheckConnection.setBackgroundColor(Color.RED);
             mCheckConnection.setTextColor(Color.WHITE);
         }
-    }
+    }*/
 
-    public class CallFloorDataApi extends AsyncTask<String, Void, String> {
+ /*   public class CallFloorDataApi extends AsyncTask<String, Void, String> {
         String server_response;
 
         @Override
@@ -237,14 +241,14 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
 
         }
-    }
-
+    }*/
+/*
     @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
         unregisterReceiver(mNetworkReceiver);
-    }
+    }*/
 
     public void initUI() {
       //  mTest = (Button) findViewById(R.id.btn_main_test);
@@ -252,24 +256,13 @@ public class MainActivity extends AppCompatActivity {
         mDisplaySSID = (TextView) findViewById(R.id.tv_main_ssid);
         mDisplaySSIDLevel = (TextView) findViewById(R.id.tv_main_level);
         mHttpResponse = (TextView) findViewById(R.id.tv_main_httprespone);
-
-
-        showSSID();
-        testRequest();
-
-       /* mTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getWifiMessage();
-            }
-        });*/
     }
 
     public void showSSID() {
         wifiConfig = new WifiConfiguration();
 
-        wifiConfig.SSID = String.format("\"%s\"", "PAL");
-        wifiConfig.preSharedKey = String.format("\"%s\"", "P@l12345");
+        wifiConfig.SSID = String.format("\"%s\"", "BELL4G-66AF");
+        wifiConfig.preSharedKey = String.format("\"%s\"", "893042458");
 
         WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
         int netId = wifiManager.addNetwork(wifiConfig);
@@ -285,12 +278,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Level of current connection
         int rssi = wifiManager.getConnectionInfo().getRssi();
-        int level = WifiManager.calculateSignalLevel(rssi, 5);
+        level = WifiManager.calculateSignalLevel(rssi, 5);
         System.out.println("Level is " + level + " out of 5");
 
 
         mDisplaySSID.setText(wifiConfig.SSID);
         mDisplaySSIDLevel.setText(new String(String.valueOf(level)));
+
+      //  getWifiMessage();
+      //  testRequest();
     }
 
     public void getWifiMessage() {
@@ -298,8 +294,8 @@ public class MainActivity extends AppCompatActivity {
 
         WifiConfiguration wifiConfig = new WifiConfiguration();
 
-        wifiConfig.SSID = String.format("\"%s\"", "PAL");
-        wifiConfig.preSharedKey = String.format("\"%s\"", "P@l12345");
+        wifiConfig.SSID = String.format("\"%s\"", "BELL4G-66AF");
+        wifiConfig.preSharedKey = String.format("\"%s\"", "893042458");
 
         WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
         int netId = wifiManager.addNetwork(wifiConfig);
@@ -325,15 +321,12 @@ public class MainActivity extends AppCompatActivity {
             level = WifiManager.calculateSignalLevel(rssi, 5);
             System.out.println("Level is " + level + " out of 5");
 
-            if ((level > 0) && (level <= 2)) {
+            if ((level > 0) && (level <= 3)) {
 
                 rssi = wifiManager.getConnectionInfo().getRssi();
                 level = WifiManager.calculateSignalLevel(rssi, 5);
 
                 Toast.makeText(getApplicationContext(), "This is Level = " + level,
-                        Toast.LENGTH_LONG).show();
-
-                Toast.makeText(getApplicationContext(), "This is Level = " + b,
                         Toast.LENGTH_LONG).show();
 
                 mDisplayMessage.setText("Please leave phone on bed");
@@ -342,8 +335,6 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             }
-
-
         }
     }
 
@@ -357,68 +348,114 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testRequest() {
-        String url = "http://my-json-feed";
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        String url = "http://119.73.222.42:8081/pvsioncms/api/devicemanager";
 
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
                         mHttpResponse.setText("Response: " + "True");
-                        mHttpState = true;
+                        mHttpState = 200;
+                        getWifiMessage();
                     }
                 }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                        mHttpResponse.setText("Response: " + "False");
-                        mHttpState = false;
-                    }
-                });
-
-// Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mHttpResponse.setText("Response: " + "False");
+                mHttpState = 404;
+                getWifiMessage();
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     public void sentDataToAPILogic() {
-        if (level < 20) {
-            sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+        level = 3;
+        wifiLevel = 3;
+
+        if (level > 20) {
+            new DataToAPI(this).execute(level,"Low Bettery", "Pal", wifiLevel, "In range", mHttpState);
+         //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
         } else if (wifiLevel > 2) {
-            sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-        } else if (mHttpState == false) {
-            sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+            new DataToAPI(this).execute(level,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+          //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+        } else if (mHttpState == 404) {
+            new DataToAPI(this).execute(level,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+           // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
         } else if ((level < 20) && (wifiLevel > 2)) {
-            sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-        } else if ((level < 20) && (mHttpState == false)) {
-            sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if ((wifiLevel > 2) && (mHttpState == false)) {
-            sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+            new DataToAPI(this).execute(level,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+           // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+        } else if ((level < 20) && (mHttpState == 404)) {
+            new DataToAPI(this).execute(level,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+         //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+        } else if ((wifiLevel > 2) && (mHttpState == 404)) {
+            new DataToAPI(this).execute(level,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+         //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         }
     }
 
-    public void sentDataToApi(int betteryLevel,String batteryLevelMessage, String ssid, int wifiLevel, String wifiMessage, Boolean httpState) {
-        String url = "http://my-json-feed";
+    public void sentDataToApi(int betteryLevel, String batteryLevelMessage, String ssid, int wifiLevel, String wifiMessage, Boolean httpState) {
+    }
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+    public class DataToAPI  extends AsyncTask{
+        private Context context;
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(context, "This is my Toast message!",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }, new Response.ErrorListener() {
+        //flag 0 means get and 1 means post.(By default it is get.)
+        public DataToAPI(Context context) {
+            this.context = context;
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
+        }
 
-                    }
-                });
+        @Override
+        protected Object doInBackground(Object[] objects) {
+          //  try{
+                Integer level = (Integer) objects[0];
+                String message = (String)objects[1];
+                String SSID = (String)objects[2];
+                Integer wifilevel = (Integer) objects[3];
+                String wifimessage = (String)objects[4];
+                Integer httpresponse = (Integer) objects[5];
 
-// Access the RequestQueue through your singleton class.
-        MySingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+            URL url;
+            HttpURLConnection urlConnection = null;
+            try {
+                url = new URL("http://119.73.222.42:8081/pvsioncms/api/devicemanager/store");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+                urlConnection.setRequestMethod("POST");
+                DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                Uri.Builder builder = new Uri.Builder()
+                        .appendQueryParameter("betterystate", level.toString())
+                        .appendQueryParameter("message", message)
+                       // .appendQueryParameter("ssid", SSID)
+                        .appendQueryParameter("wifilevel", wifilevel.toString())
+                        .appendQueryParameter("wifimessage", wifimessage)
+                        .appendQueryParameter("httpresponse", httpresponse.toString());
+                String query = builder.build().getEncodedQuery();
+                wr.writeBytes(query);
+                Log.e("JSON Input", query);
+                wr.flush();
+                wr.close();
+                urlConnection.connect();
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                  //  server_response = AppUtils.readStream(urlConnection.getInputStream());
+                }
+            }
+            catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
     }
 
 }
