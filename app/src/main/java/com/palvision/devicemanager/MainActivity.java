@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
                 initUI();
                 testRequest();
+                betteryLevel();
 
                 handler.postDelayed(this, 10000);
             }
@@ -103,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(r, 5000);
 
     }
-
-  /*  @Override
+/*
+    @Override
     protected void onStart() {
 
         registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
@@ -115,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         }
         super.onStart();
-    }*/
-/*
+    }
+
     public class BatteryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -315,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
         wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
         System.out.println("Level is " + level + " out of 5");
 
-        while (level < 4) {
+    //    while (level < 4) {
 
             rssi = wifiManager.getConnectionInfo().getRssi();
             level = WifiManager.calculateSignalLevel(rssi, 5);
@@ -333,9 +334,9 @@ public class MainActivity extends AppCompatActivity {
                 mDisplaySSID.setText(wifiConfig.SSID);
                 mDisplaySSIDLevel.setText(new String(String.valueOf(level)));
 
-                break;
+             //   break;
             }
-        }
+     //   }
     }
 
 
@@ -347,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         return (networkInfo != null && networkInfo.isConnected());
     }
 
-    public void testRequest() {
+    public synchronized void testRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String url = "http://119.73.222.42:8081/pvsioncms/api/devicemanager";
@@ -456,6 +457,19 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+    }
+    public void betteryLevel() {
+        Intent batteryIntent = context.getApplicationContext().registerReceiver(null,
+                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int rawlevel = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        double scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        double betteryLevel = -1;
+        if (rawlevel >= 0 && scale > 0) {
+            betteryLevel = (rawlevel *100 )/ scale;
+        }
+
+        mBatteryLevelText.setText(getString(R.string.battery_level) + " " + betteryLevel);
+        mBatteryLevelProgress.setProgress((int) betteryLevel);
     }
 
 }
