@@ -351,22 +351,32 @@ public class MainActivity extends AppCompatActivity {
 
     public void sentDataToAPILogic() {
 
-        if (betteryLevel < 20) {
-            new DataToAPI(this).execute(betteryLevel,"Low Bettery", "Pal", wifiLevel, "In range", mHttpState);
+        if (betteryLevel <= 20) {
+            if (wifiLevel <= 2) {
+                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+            } else {
+                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+            }
          //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if (wifiLevel > 2) {
-            new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+        } else if (wifiLevel >= 2) {
+            if (betteryLevel > 20 && betteryLevel < 60) {
+                new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+            } else if (betteryLevel > 60) {
+                new DataToAPI(this).execute(betteryLevel, "Full Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+            } else {
+                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+            }
           //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         } else if (mHttpState == 404) {
             new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
            // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if ((betteryLevel < 20) && (wifiLevel > 2)) {
+        } else if ((betteryLevel < 20) && (wifiLevel >= 2)) {
             new DataToAPI(this).execute(betteryLevel,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
            // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         } else if ((betteryLevel < 20) && (mHttpState == 404)) {
             new DataToAPI(this).execute(betteryLevel,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
          //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if ((wifiLevel > 2) && (mHttpState == 404)) {
+        } else if ((wifiLevel >= 2) && (mHttpState == 404)) {
             new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
          //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         }
