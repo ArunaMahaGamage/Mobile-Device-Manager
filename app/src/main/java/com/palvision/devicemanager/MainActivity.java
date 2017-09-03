@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     Context context;
 
     Integer mHttpState;
-    int level, wifiLevel;
+    int betteryLevel, wifiLevel;
 
     WifiConfiguration wifiConfig;
 
@@ -87,15 +87,15 @@ public class MainActivity extends AppCompatActivity {
     //    mReceiver = new BatteryBroadcastReceiver();
     //    mNetworkReceiver = new NetworkChangeReceiver();
 
+        initUI();
+
 
         final Handler handler = new Handler();
 
         final Runnable r = new Runnable() {
             public void run() {
 
-                initUI();
                 testRequest();
-                betteryLevel();
 
                 handler.postDelayed(this, 10000);
             }
@@ -259,7 +259,10 @@ public class MainActivity extends AppCompatActivity {
         mHttpResponse = (TextView) findViewById(R.id.tv_main_httprespone);
     }
 
-    public void showSSID() {
+
+    public void getWifiMessage() {
+
+
         wifiConfig = new WifiConfiguration();
 
         wifiConfig.SSID = String.format("\"%s\"", "BELL4G-66AF");
@@ -267,42 +270,10 @@ public class MainActivity extends AppCompatActivity {
 
         WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
         int netId = wifiManager.addNetwork(wifiConfig);
-      //  wifiManager.disconnect();
-        wifiManager.enableNetwork(netId, true);
-     //   wifiManager.reconnect();
-
-        System.out.println(wifiConfig.status);
-
-        System.out.println(wifiManager.getConnectionInfo());
-
-        System.out.println(wifiManager.EXTRA_PREVIOUS_WIFI_STATE);
-
-        // Level of current connection
-        int rssi = wifiManager.getConnectionInfo().getRssi();
-        level = WifiManager.calculateSignalLevel(rssi, 5);
-        System.out.println("Level is " + level + " out of 5");
-
-
-        mDisplaySSID.setText(wifiConfig.SSID);
-        mDisplaySSIDLevel.setText(new String(String.valueOf(level)));
-
-      //  getWifiMessage();
-      //  testRequest();
-    }
-
-    public void getWifiMessage() {
-
-
-        WifiConfiguration wifiConfig = new WifiConfiguration();
-
-        wifiConfig.SSID = String.format("\"%s\"", "BELL4G-66AF");
-        wifiConfig.preSharedKey = String.format("\"%s\"", "893042458");
-
-        WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
-        int netId = wifiManager.addNetwork(wifiConfig);
      //   wifiManager.disconnect();
-        wifiManager.enableNetwork(netId, true);
-     //   wifiManager.reconnect();
+      //  wifiManager.enableNetwork(netId, true);
+    //    wifiManager.reconnect();
+
 
         System.out.println(wifiConfig.status);
 
@@ -314,29 +285,30 @@ public class MainActivity extends AppCompatActivity {
         // Level of current connection
         int rssi = wifiManager.getConnectionInfo().getRssi();
         wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
-        System.out.println("Level is " + level + " out of 5");
+        System.out.println("Level is " + wifiLevel + " out of 5");
 
     //    while (level < 4) {
 
             rssi = wifiManager.getConnectionInfo().getRssi();
-            level = WifiManager.calculateSignalLevel(rssi, 5);
-            System.out.println("Level is " + level + " out of 5");
+            wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
+            System.out.println("Level is " + wifiLevel + " out of 5");
 
-            if ((level > 0) && (level <= 3)) {
+            if ((wifiLevel > 0) && (wifiLevel <= 3)) {
 
                 rssi = wifiManager.getConnectionInfo().getRssi();
-                level = WifiManager.calculateSignalLevel(rssi, 5);
+                wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
 
-                Toast.makeText(getApplicationContext(), "This is Level = " + level,
+                Toast.makeText(getApplicationContext(), "This is Level = " + wifiLevel,
                         Toast.LENGTH_LONG).show();
 
                 mDisplayMessage.setText("Please leave phone on bed");
                 mDisplaySSID.setText(wifiConfig.SSID);
-                mDisplaySSIDLevel.setText(new String(String.valueOf(level)));
+                mDisplaySSIDLevel.setText(new String(String.valueOf(wifiLevel)));
 
              //   break;
             }
      //   }
+        sentDataToAPILogic();
     }
 
 
@@ -373,34 +345,31 @@ public class MainActivity extends AppCompatActivity {
         });
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+
+        betteryLevel();
     }
 
     public void sentDataToAPILogic() {
-        level = 3;
-        wifiLevel = 3;
 
-        if (level > 20) {
-            new DataToAPI(this).execute(level,"Low Bettery", "Pal", wifiLevel, "In range", mHttpState);
+        if (betteryLevel < 20) {
+            new DataToAPI(this).execute(betteryLevel,"Low Bettery", "Pal", wifiLevel, "In range", mHttpState);
          //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
         } else if (wifiLevel > 2) {
-            new DataToAPI(this).execute(level,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+            new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
           //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         } else if (mHttpState == 404) {
-            new DataToAPI(this).execute(level,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+            new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
            // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if ((level < 20) && (wifiLevel > 2)) {
-            new DataToAPI(this).execute(level,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+        } else if ((betteryLevel < 20) && (wifiLevel > 2)) {
+            new DataToAPI(this).execute(betteryLevel,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
            // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-        } else if ((level < 20) && (mHttpState == 404)) {
-            new DataToAPI(this).execute(level,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+        } else if ((betteryLevel < 20) && (mHttpState == 404)) {
+            new DataToAPI(this).execute(betteryLevel,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
          //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
         } else if ((wifiLevel > 2) && (mHttpState == 404)) {
-            new DataToAPI(this).execute(level,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+            new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
          //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         }
-    }
-
-    public void sentDataToApi(int betteryLevel, String batteryLevelMessage, String ssid, int wifiLevel, String wifiMessage, Boolean httpState) {
     }
 
     public class DataToAPI  extends AsyncTask{
@@ -434,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("betterystate", level.toString())
                         .appendQueryParameter("message", message)
-                       // .appendQueryParameter("ssid", SSID)
+                        .appendQueryParameter("ssid", SSID)
                         .appendQueryParameter("wifilevel", wifilevel.toString())
                         .appendQueryParameter("wifimessage", wifimessage)
                         .appendQueryParameter("httpresponse", httpresponse.toString());
@@ -463,9 +432,9 @@ public class MainActivity extends AppCompatActivity {
                 new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int rawlevel = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         double scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        double betteryLevel = -1;
+        betteryLevel = -1;
         if (rawlevel >= 0 && scale > 0) {
-            betteryLevel = (rawlevel *100 )/ scale;
+            betteryLevel = (int) ((rawlevel *100 )/ scale);
         }
 
         mBatteryLevelText.setText(getString(R.string.battery_level) + " " + betteryLevel);
