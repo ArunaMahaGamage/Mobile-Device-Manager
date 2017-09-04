@@ -56,6 +56,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static android.content.Context.WIFI_SERVICE;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView mBatteryLevelText;
@@ -76,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
     String macAddress;
     Integer ipAddress;
 
+    String PAL_BSSID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         context = getApplicationContext();
+
+        PAL_BSSID = "00:26:75:11:9e:66";
 
         mBatteryLevelText = (TextView) findViewById(R.id.tvBatteryText);
         mCheckConnection = (TextView) findViewById(R.id.tvCheckConnection);
@@ -279,18 +285,25 @@ public class MainActivity extends AppCompatActivity {
         macAddress = wInfo.getBSSID();
         ipAddress = wInfo.getIpAddress();
 
-        String mac = wifiConfig.BSSID;
+        String mac = wInfo.getBSSID();
 
         int ip = 1711450304;
 
-        String PAL_BSSID = "00:26:75:11:9e:66";
+        PAL_BSSID = "00:26:75:11:9e:66";
 
         String Aruna_BSSID = "3c:a0:67:7d:33:f7";
         int Aruna_IP = 1728064010;
 
+        wifiManager.setWifiEnabled(true);
+
+        /*
         if ((PAL_BSSID != macAddress)) {
             wifiManager.disconnect();
-        }
+
+        //    wifiManager.setWifiEnabled(false);
+            boolean wifiEnabled = wifiManager.isWifiEnabled();
+            System.out.print(wifiEnabled);
+        }*/
 
       //   wifiManager.disconnect();
       //  wifiManager.enableNetwork(netId, true);
@@ -479,4 +492,50 @@ public class MainActivity extends AppCompatActivity {
         mBatteryLevelProgress.setProgress((int) betteryLevel);
     }
 
+    public static class MyNetworkMonitor extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Process the Intent here
+            WifiConfiguration wifiConfig = new WifiConfiguration();
+
+            wifiConfig.SSID = String.format("\"%s\"", "localhost.localdomain");
+            wifiConfig.preSharedKey = String.format("\"%s\"", "nvZhZr69");
+
+            WifiManager wifiManager=(WifiManager) context.getSystemService(WIFI_SERVICE);
+            //  int netId = wifiManager.addNetwork(wifiConfig);
+
+            WifiInfo wInfo = wifiManager.getConnectionInfo();
+            String macAddress = wInfo.getBSSID();
+            Integer ipAddress = wInfo.getIpAddress();
+
+            String mac = wInfo.getBSSID();
+
+            int ip = 1711450304;
+
+            String PAL_BSSID = "00:26:75:11:9e:66";
+
+            String Aruna_BSSID = "3c:a0:67:7d:33:f7";
+            int Aruna_IP = 1728064010;
+
+
+
+            if ((PAL_BSSID == macAddress)) {
+
+                wifiManager.setWifiEnabled(true);
+
+            } else if (PAL_BSSID != macAddress){
+
+                wifiManager.disconnect();
+
+                wifiManager.setWifiEnabled(false);
+
+                //    wifiManager.setWifiEnabled(false);
+                boolean wifiEnabled = wifiManager.isWifiEnabled();
+                System.out.print(wifiEnabled);
+            }
+
+        }
+    }
 }
