@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.BatteryManager;
@@ -71,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
     int betteryLevel, wifiLevel;
 
     WifiConfiguration wifiConfig;
+    WifiInfo wInfo;
+    String macAddress;
+    Integer ipAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,12 +269,30 @@ public class MainActivity extends AppCompatActivity {
 
         wifiConfig = new WifiConfiguration();
 
-        wifiConfig.SSID = String.format("\"%s\"", "BELL4G-66AF");
-        wifiConfig.preSharedKey = String.format("\"%s\"", "893042458");
+        wifiConfig.SSID = String.format("\"%s\"", "localhost.localdomain");
+        wifiConfig.preSharedKey = String.format("\"%s\"", "nvZhZr69");
 
         WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
-        int netId = wifiManager.addNetwork(wifiConfig);
-     //   wifiManager.disconnect();
+      //  int netId = wifiManager.addNetwork(wifiConfig);
+
+        wInfo = wifiManager.getConnectionInfo();
+        macAddress = wInfo.getBSSID();
+        ipAddress = wInfo.getIpAddress();
+
+        String mac = wifiConfig.BSSID;
+
+        int ip = 1711450304;
+
+        String PAL_BSSID = "00:26:75:11:9e:66";
+
+        String Aruna_BSSID = "3c:a0:67:7d:33:f7";
+        int Aruna_IP = 1728064010;
+
+        if ((PAL_BSSID != macAddress)) {
+            wifiManager.disconnect();
+        }
+
+      //   wifiManager.disconnect();
       //  wifiManager.enableNetwork(netId, true);
     //    wifiManager.reconnect();
 
@@ -350,35 +372,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sentDataToAPILogic() {
+        if ((ipAddress == wInfo.getIpAddress()) && (macAddress == wInfo.getMacAddress())) {
 
-        if (betteryLevel <= 20) {
-            if (wifiLevel <= 2) {
-                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-            } else {
-                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
+            if (betteryLevel <= 100) {
+                if (wifiLevel <= 2) {
+                    new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState, macAddress, ipAddress);
+                } else {
+                    new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+                }
+                //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+            } else if (wifiLevel <= 2) {
+                if (betteryLevel > 20 && betteryLevel < 60) {
+                    new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+                } else if (betteryLevel > 60) {
+                    new DataToAPI(this).execute(betteryLevel, "Full Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+                } else {
+                    new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+                }
+                //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+            } else if (mHttpState == 404) {
+                new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState, macAddress, ipAddress);
+                // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+            } else if ((betteryLevel < 20) && (wifiLevel <= 2)) {
+                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState, macAddress, ipAddress);
+                // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
+            } else if ((betteryLevel < 20) && (mHttpState == 404)) {
+                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState, macAddress, ipAddress);
+                //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
+            } else if ((wifiLevel <= 2) && (mHttpState == 404)) {
+                new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState, macAddress, ipAddress);
+                //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
             }
-         //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if (wifiLevel >= 2) {
-            if (betteryLevel > 20 && betteryLevel < 60) {
-                new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
-            } else if (betteryLevel > 60) {
-                new DataToAPI(this).execute(betteryLevel, "Full Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
-            } else {
-                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState);
-            }
-          //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-        } else if (mHttpState == 404) {
-            new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-           // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if ((betteryLevel < 20) && (wifiLevel >= 2)) {
-            new DataToAPI(this).execute(betteryLevel,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-           // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-        } else if ((betteryLevel < 20) && (mHttpState == 404)) {
-            new DataToAPI(this).execute(betteryLevel,"Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-         //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-        } else if ((wifiLevel >= 2) && (mHttpState == 404)) {
-            new DataToAPI(this).execute(betteryLevel,"Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-         //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
         }
     }
 
@@ -400,6 +424,8 @@ public class MainActivity extends AppCompatActivity {
                 Integer wifilevel = (Integer) objects[3];
                 String wifimessage = (String)objects[4];
                 Integer httpresponse = (Integer) objects[5];
+                String macAddress = (String) objects[6];
+                Integer ipAddress = (Integer) objects[7];
 
             URL url;
             HttpURLConnection urlConnection = null;
@@ -416,7 +442,9 @@ public class MainActivity extends AppCompatActivity {
                         .appendQueryParameter("ssid", SSID)
                         .appendQueryParameter("wifilevel", wifilevel.toString())
                         .appendQueryParameter("wifimessage", wifimessage)
-                        .appendQueryParameter("httpresponse", httpresponse.toString());
+                        .appendQueryParameter("httpresponse", httpresponse.toString())
+                        .appendQueryParameter("mac_address", macAddress)
+                        .appendQueryParameter("ip_address", ipAddress.toString());
                 String query = builder.build().getEncodedQuery();
                 wr.writeBytes(query);
                 Log.e("JSON Input", query);
