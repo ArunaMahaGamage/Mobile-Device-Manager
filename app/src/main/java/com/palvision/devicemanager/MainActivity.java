@@ -71,12 +71,12 @@ public class MainActivity extends AppCompatActivity {
     Context context;
 
     Integer mHttpState;
-    int betteryLevel, wifiLevel;
+    int mBetteryLevel, mWifiLevel;
 
-    WifiConfiguration wifiConfig;
-    WifiInfo wInfo;
-    String macAddress;
-    Integer ipAddress;
+    WifiConfiguration mWifiConfig;
+    WifiInfo mWInfo;
+    String mMacAddress;
+    Integer mIpAddress;
 
     String PAL_BSSID;
 
@@ -273,76 +273,45 @@ public class MainActivity extends AppCompatActivity {
     public void getWifiMessage() {
 
 
-        wifiConfig = new WifiConfiguration();
+        mWifiConfig = new WifiConfiguration();
 
-        wifiConfig.SSID = String.format("\"%s\"", "localhost.localdomain");
-        wifiConfig.preSharedKey = String.format("\"%s\"", "nvZhZr69");
+        mWifiConfig.SSID = String.format("\"%s\"", "PAL");
+        mWifiConfig.preSharedKey = String.format("\"%s\"", "newoffice");
 
         WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
       //  int netId = wifiManager.addNetwork(wifiConfig);
 
-        wInfo = wifiManager.getConnectionInfo();
-        macAddress = wInfo.getBSSID();
-        ipAddress = wInfo.getIpAddress();
+        mWInfo = wifiManager.getConnectionInfo();
+        mMacAddress = mWInfo.getBSSID();
+        mIpAddress = mWInfo.getIpAddress();
 
-        String mac = wInfo.getBSSID();
+        String mac = mWInfo.getBSSID();
 
         int ip = 1711450304;
 
-        PAL_BSSID = "00:26:75:11:9e:66";
+        PAL_BSSID = "c4:f0:81:ba:66:af";
 
         String Aruna_BSSID = "3c:a0:67:7d:33:f7";
         int Aruna_IP = 1728064010;
-
-        wifiManager.setWifiEnabled(true);
-
-        /*
-        if ((PAL_BSSID != macAddress)) {
-            wifiManager.disconnect();
-
-        //    wifiManager.setWifiEnabled(false);
-            boolean wifiEnabled = wifiManager.isWifiEnabled();
-            System.out.print(wifiEnabled);
-        }*/
-
-      //   wifiManager.disconnect();
-      //  wifiManager.enableNetwork(netId, true);
-    //    wifiManager.reconnect();
-
-
-        System.out.println(wifiConfig.status);
-
-        System.out.println(wifiManager.getConnectionInfo());
-
-        System.out.println(wifiManager.EXTRA_PREVIOUS_WIFI_STATE);
-
-
         // Level of current connection
         int rssi = wifiManager.getConnectionInfo().getRssi();
-        wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
-        System.out.println("Level is " + wifiLevel + " out of 5");
+        mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
+        System.out.println("Level is " + mWifiLevel + " out of 5");
 
-    //    while (level < 4) {
-
-            rssi = wifiManager.getConnectionInfo().getRssi();
-            wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
-            System.out.println("Level is " + wifiLevel + " out of 5");
-
-            if ((wifiLevel > 0) && (wifiLevel <= 3)) {
+            if ((mWifiLevel > 0) && (mWifiLevel >= 2)) {
 
                 rssi = wifiManager.getConnectionInfo().getRssi();
-                wifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
+                mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
 
-                Toast.makeText(getApplicationContext(), "This is Level = " + wifiLevel,
+                Toast.makeText(getApplicationContext(), "This is Level = " + mWifiLevel,
                         Toast.LENGTH_LONG).show();
 
-                mDisplayMessage.setText("Please leave phone on bed");
-                mDisplaySSID.setText(wifiConfig.SSID);
-                mDisplaySSIDLevel.setText(new String(String.valueOf(wifiLevel)));
-
-             //   break;
+                if (mWifiLevel == 2) {
+                    mDisplayMessage.setText("Please leave phone on bed");
+                }
+                mDisplaySSID.setText(mWInfo.getSSID());
+                mDisplaySSIDLevel.setText(new String(String.valueOf(mWifiLevel)));
             }
-     //   }
         sentDataToAPILogic();
     }
 
@@ -385,38 +354,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sentDataToAPILogic() {
-        if ((ipAddress == wInfo.getIpAddress()) && (macAddress == wInfo.getMacAddress())) {
 
-            if (betteryLevel <= 100) {
-                if (wifiLevel <= 2) {
-                    new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState, macAddress, ipAddress);
+
+            if (mBetteryLevel <= 100) {
+                if (mWifiLevel <= 2) {
+                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 } else {
-                    new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 }
                 //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-            } else if (wifiLevel <= 2) {
-                if (betteryLevel > 20 && betteryLevel < 60) {
-                    new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
-                } else if (betteryLevel > 60) {
-                    new DataToAPI(this).execute(betteryLevel, "Full Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+            } else if (mWifiLevel <= 2) {
+                if (mBetteryLevel > 20 && mBetteryLevel < 60) {
+                    new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
+                } else if (mBetteryLevel > 60) {
+                    new DataToAPI(this).execute(mBetteryLevel, "Full Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 } else {
-                    new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "Out Of range", mHttpState, macAddress, ipAddress);
+                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 }
                 //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
             } else if (mHttpState == 404) {
-                new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState, macAddress, ipAddress);
+                new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-            } else if ((betteryLevel < 20) && (wifiLevel <= 2)) {
-                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState, macAddress, ipAddress);
+            } else if ((mBetteryLevel < 20) && (mWifiLevel <= 2)) {
+                new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "out of range", mHttpState, mMacAddress, mIpAddress);
                 // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
-            } else if ((betteryLevel < 20) && (mHttpState == 404)) {
-                new DataToAPI(this).execute(betteryLevel, "Low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState, macAddress, ipAddress);
+            } else if ((mBetteryLevel < 20) && (mHttpState == 404)) {
+                new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
-            } else if ((wifiLevel <= 2) && (mHttpState == 404)) {
-                new DataToAPI(this).execute(betteryLevel, "Mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState, macAddress, ipAddress);
+            } else if ((mWifiLevel <= 2) && (mHttpState == 404)) {
+                new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "out of range", mHttpState, mMacAddress, mIpAddress);
                 //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
             }
-        }
+
     }
 
     public class DataToAPI  extends AsyncTask{
@@ -438,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
                 String wifimessage = (String)objects[4];
                 Integer httpresponse = (Integer) objects[5];
                 String macAddress = (String) objects[6];
-                Integer ipAddress = (Integer) objects[7];
+                Integer mIpAddress = (Integer) objects[7];
 
             URL url;
             HttpURLConnection urlConnection = null;
@@ -457,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
                         .appendQueryParameter("wifimessage", wifimessage)
                         .appendQueryParameter("httpresponse", httpresponse.toString())
                         .appendQueryParameter("mac_address", macAddress)
-                        .appendQueryParameter("ip_address", ipAddress.toString());
+                        .appendQueryParameter("ip_address", mIpAddress.toString());
                 String query = builder.build().getEncodedQuery();
                 wr.writeBytes(query);
                 Log.e("JSON Input", query);
@@ -483,13 +452,13 @@ public class MainActivity extends AppCompatActivity {
                 new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
         int rawlevel = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
         double scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-        betteryLevel = -1;
+        mBetteryLevel = -1;
         if (rawlevel >= 0 && scale > 0) {
-            betteryLevel = (int) ((rawlevel *100 )/ scale);
+            mBetteryLevel = (int) ((rawlevel *100 )/ scale);
         }
 
-        mBatteryLevelText.setText(getString(R.string.battery_level) + " " + betteryLevel);
-        mBatteryLevelProgress.setProgress((int) betteryLevel);
+        mBatteryLevelText.setText(getString(R.string.battery_level) + " " + mBetteryLevel);
+        mBatteryLevelProgress.setProgress((int) mBetteryLevel);
     }
 
     public static class MyNetworkMonitor extends BroadcastReceiver {
@@ -500,36 +469,40 @@ public class MainActivity extends AppCompatActivity {
             // Process the Intent here
             WifiConfiguration wifiConfig = new WifiConfiguration();
 
-            wifiConfig.SSID = String.format("\"%s\"", "localhost.localdomain");
-            wifiConfig.preSharedKey = String.format("\"%s\"", "nvZhZr69");
+            wifiConfig.SSID = String.format("\"%s\"", "PAL");
+            wifiConfig.preSharedKey = String.format("\"%s\"", "newoffice");
 
             WifiManager wifiManager=(WifiManager) context.getSystemService(WIFI_SERVICE);
             //  int netId = wifiManager.addNetwork(wifiConfig);
+            wifiManager.setWifiEnabled(true);
 
             WifiInfo wInfo = wifiManager.getConnectionInfo();
-            String macAddress = wInfo.getBSSID();
-            Integer ipAddress = wInfo.getIpAddress();
+            String APMacAddress = wInfo.getBSSID();
+            Integer mIpAddress = wInfo.getIpAddress();
 
             String mac = wInfo.getBSSID();
 
             int ip = 1711450304;
 
-            String PAL_BSSID = "00:26:75:11:9e:66";
+        //    String PAL_BSSID = "00:26:75:11:9e:66";
+
+            String PAL_BSSID = "c4:f0:81:ba:66:af";
 
             String Aruna_BSSID = "3c:a0:67:7d:33:f7";
             int Aruna_IP = 1728064010;
 
+            wifiManager.setWifiEnabled(true);
 
-
-            if ((PAL_BSSID == macAddress)) {
+            if ((PAL_BSSID.equals(APMacAddress))) {
 
                 wifiManager.setWifiEnabled(true);
+                wifiManager.reconnect();
 
-            } else if (PAL_BSSID != macAddress){
+            } else {
 
                 wifiManager.disconnect();
 
-                wifiManager.setWifiEnabled(false);
+            //    wifiManager.setWifiEnabled(false);
 
                 //    wifiManager.setWifiEnabled(false);
                 boolean wifiEnabled = wifiManager.isWifiEnabled();
