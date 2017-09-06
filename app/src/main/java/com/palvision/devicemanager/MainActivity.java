@@ -114,170 +114,22 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(r, 5000);
 
     }
-/*
-    @Override
-    protected void onStart() {
-
-        registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        }
-        super.onStart();
-    }
-
-    public class BatteryBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-                level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                mBatteryLevelText.setText(getString(R.string.battery_level) + " " + level);
-                mBatteryLevelProgress.setProgress(level);
-        }
-    }*/
-
- /*   public class NetworkChangeReceiver extends BroadcastReceiver {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-                try {
-                    if (internetConnectionAvailable(1000)) {
-                        dialog(true);
-                        Log.e("keshav", "Online Connect Intenet ");
-                    } else {
-                        dialog(false);
-                        Log.e("keshav", "Conectivity Failure !!! ");
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            private boolean internetConnectionAvailable(int timeOut) {
-                InetAddress inetAddress = null;
-                try {
-                    Future<InetAddress> future = Executors.newSingleThreadExecutor().submit(new Callable<InetAddress>() {
-                        @Override
-                        public InetAddress call() {
-                            try {
-                                return InetAddress.getByName("google.com");
-                            } catch (UnknownHostException e) {
-                                return null;
-                            }
-                        }
-                    });
-                    inetAddress = future.get(timeOut, TimeUnit.MILLISECONDS);
-                    future.cancel(true);
-                } catch (InterruptedException e) {
-                } catch (ExecutionException e) {
-                } catch (TimeoutException e) {
-                }
-                return inetAddress != null && !inetAddress.equals("");
-            }
-        }*/
-
-/*    public static void dialog(boolean value){
-
-        if(value){
-            mCheckConnection.setText("We are back !!!");
-            mCheckConnection.setBackgroundColor(Color.GREEN);
-            mCheckConnection.setTextColor(Color.WHITE);
-
-            Handler handler = new Handler();
-            Runnable delayrunnable = new Runnable() {
-                @Override
-                public void run() {
-                    mCheckConnection.setVisibility(View.GONE);
-                }
-            };
-            handler.postDelayed(delayrunnable, 3000);
-        }else {
-            mCheckConnection.setVisibility(View.VISIBLE);
-            mCheckConnection.setText("Could not Connect to internet");
-            mCheckConnection.setBackgroundColor(Color.RED);
-            mCheckConnection.setTextColor(Color.WHITE);
-        }
-    }*/
-
- /*   public class CallFloorDataApi extends AsyncTask<String, Void, String> {
-        String server_response;
-
-        @Override
-        protected void onPreExecute() {
-
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            URL url;
-            HttpURLConnection urlConnection = null;
-
-            try {
-                url = new URL(strings[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
-                urlConnection.setDoInput(true);
-                urlConnection.setRequestMethod("POST");
-
-                DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
-
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("floor", "")
-                        .appendQueryParameter("update", "");
-
-                String query = builder.build().getEncodedQuery();
-                wr.writeBytes(query);
-                Log.e("JSON Input", query);
-                wr.flush();
-                wr.close();
-                urlConnection.connect();
-
-                int responseCode = urlConnection.getResponseCode();
-
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    //server_response = AppUtils.readStream(urlConnection.getInputStream());
-                }
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-        }
-    }*/
-/*
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
-        unregisterReceiver(mNetworkReceiver);
-    }*/
 
     public void initUI() {
-      //  mTest = (Button) findViewById(R.id.btn_main_test);
         mDisplayMessage = (TextView) findViewById(R.id.tv_main_display);
         mDisplaySSID = (TextView) findViewById(R.id.tv_main_ssid);
         mDisplaySSIDLevel = (TextView) findViewById(R.id.tv_main_level);
         mHttpResponse = (TextView) findViewById(R.id.tv_main_httprespone);
     }
 
+    public void setToNull() {
+        mDisplayMessage.setText(""); mDisplaySSID.setText(""); mDisplaySSIDLevel.setText(""); mHttpResponse.setText("");
+    }
 
     public void getWifiMessage() {
-
-
         mWifiConfig = new WifiConfiguration();
-
         mWifiConfig.SSID = String.format("\"%s\"", "PAL");
         mWifiConfig.preSharedKey = String.format("\"%s\"", "newoffice");
-
         WifiManager wifiManager=(WifiManager)getSystemService(WIFI_SERVICE);
       //  int netId = wifiManager.addNetwork(wifiConfig);
 
@@ -285,43 +137,38 @@ public class MainActivity extends AppCompatActivity {
         mMacAddress = mWInfo.getBSSID();
         mIpAddress = mWInfo.getIpAddress();
 
-        String mac = mWInfo.getBSSID();
-
         int ip = 1711450304;
 
-        PAL_BSSID = "c4:f0:81:ba:66:af";
-
-        String Aruna_BSSID = "3c:a0:67:7d:33:f7";
-        int Aruna_IP = 1728064010;
+        PAL_BSSID = "00:26:75:11:9e:66";
         // Level of current connection
         int rssi = wifiManager.getConnectionInfo().getRssi();
         mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
-        System.out.println("Level is " + mWifiLevel + " out of 5");
 
-            if ((mWifiLevel > 0) && (mWifiLevel >= 2)) {
+            if ((mWifiLevel > 0)) {
 
                 rssi = wifiManager.getConnectionInfo().getRssi();
                 mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
 
-                Toast.makeText(getApplicationContext(), "This is Level = " + mWifiLevel,
+                Toast.makeText(getApplicationContext(), "WIFI Level = " + mWifiLevel,
+                        Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "SSID = " + mWInfo.getSSID(),
                         Toast.LENGTH_LONG).show();
 
-                if (mWifiLevel == 2) {
+                if (mWifiLevel <= 3) {
+                    mDisplaySSID.setText(mWInfo.getSSID());
+                    mDisplaySSIDLevel.setText(new String(String.valueOf(mWifiLevel)));
+                } else if(mWifiLevel <= 2) {
+                    Toast.makeText(getApplicationContext(), "Please leave phone on bed",
+                            Toast.LENGTH_LONG).show();
                     mDisplayMessage.setText("Please leave phone on bed");
+                } else {
+                    mDisplayMessage.setText("");
+                    mDisplaySSID.setText("");
+                    mDisplaySSIDLevel.setText("");
                 }
-                mDisplaySSID.setText(mWInfo.getSSID());
-                mDisplaySSIDLevel.setText(new String(String.valueOf(mWifiLevel)));
+
             }
         sentDataToAPILogic();
-    }
-
-
-
-    public boolean isOnline() {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
     }
 
     public synchronized void testRequest() {
@@ -358,31 +205,31 @@ public class MainActivity extends AppCompatActivity {
 
             if (mBetteryLevel <= 100) {
                 if (mWifiLevel <= 2) {
-                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
+                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 } else {
                     new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 }
                 //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
             } else if (mWifiLevel <= 2) {
                 if (mBetteryLevel > 20 && mBetteryLevel < 60) {
-                    new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
+                    new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWInfo.getSSID(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 } else if (mBetteryLevel > 60) {
-                    new DataToAPI(this).execute(mBetteryLevel, "Full Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
+                    new DataToAPI(this).execute(mBetteryLevel, "Full Bettery", mWInfo.getSSID(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 } else {
-                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
+                    new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "Out Of range", mHttpState, mMacAddress, mIpAddress);
                 }
                 //  sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
             } else if (mHttpState == 404) {
-                new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
+                new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWInfo.getSSID(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 // sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
             } else if ((mBetteryLevel < 20) && (mWifiLevel <= 2)) {
-                new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "out of range", mHttpState, mMacAddress, mIpAddress);
+                new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "out of range", mHttpState, mMacAddress, mIpAddress);
                 // sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
             } else if ((mBetteryLevel < 20) && (mHttpState == 404)) {
-                new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
+                new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 //   sentDataToApi(level, "low Bettery", wifiConfig.SSID.toString(), wifiLevel, "In range", mHttpState);
             } else if ((mWifiLevel <= 2) && (mHttpState == 404)) {
-                new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWifiConfig.SSID.toString(), mWifiLevel, "out of range", mHttpState, mMacAddress, mIpAddress);
+                new DataToAPI(this).execute(mBetteryLevel, "Mid Bettery", mWInfo.getSSID(), mWifiLevel, "out of range", mHttpState, mMacAddress, mIpAddress);
                 //   sentDataToApi(level, "mid Bettery", wifiConfig.SSID.toString(), wifiLevel, "out of range", mHttpState);
             }
 
@@ -476,39 +323,23 @@ public class MainActivity extends AppCompatActivity {
             //  int netId = wifiManager.addNetwork(wifiConfig);
             wifiManager.setWifiEnabled(true);
 
+            int rssi = wifiManager.getConnectionInfo().getRssi();
+            int mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
+
             WifiInfo wInfo = wifiManager.getConnectionInfo();
             String APMacAddress = wInfo.getBSSID();
             Integer mIpAddress = wInfo.getIpAddress();
 
-            String mac = wInfo.getBSSID();
-
-            int ip = 1711450304;
-
-        //    String PAL_BSSID = "00:26:75:11:9e:66";
-
-            String PAL_BSSID = "c4:f0:81:ba:66:af";
-
-            String Aruna_BSSID = "3c:a0:67:7d:33:f7";
-            int Aruna_IP = 1728064010;
+            String PAL_BSSID = "00:26:75:11:9e:66";
 
             wifiManager.setWifiEnabled(true);
 
             if ((PAL_BSSID.equals(APMacAddress))) {
-
                 wifiManager.setWifiEnabled(true);
                 wifiManager.reconnect();
-
             } else {
-
                 wifiManager.disconnect();
-
-            //    wifiManager.setWifiEnabled(false);
-
-                //    wifiManager.setWifiEnabled(false);
-                boolean wifiEnabled = wifiManager.isWifiEnabled();
-                System.out.print(wifiEnabled);
             }
-
         }
     }
 }

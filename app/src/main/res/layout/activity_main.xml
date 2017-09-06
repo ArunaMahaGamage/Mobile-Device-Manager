@@ -33,10 +33,9 @@
         android:id="@+id/tvCheckConnection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Connection establised !"
         android:layout_below="@+id/progressBar"
-        android:padding="25dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:padding="25dp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -56,8 +55,7 @@
         android:layout_marginLeft="19dp"
         android:layout_marginStart="19dp"
         android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/textView2"
-        android:text="TextView" />
+        android:layout_toRightOf="@+id/textView2" />
 
     <TextView
         android:id="@+id/textView4"
@@ -75,13 +73,12 @@
         android:id="@+id/tv_main_ssid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_below="@+id/textView4"
+        android:layout_alignEnd="@+id/tv_main_display"
         android:layout_alignLeft="@+id/tv_main_display"
-        android:layout_alignStart="@+id/tv_main_display"
-        android:layout_marginTop="22dp"
         android:layout_alignRight="@+id/tv_main_display"
-        android:layout_alignEnd="@+id/tv_main_display" />
+        android:layout_alignStart="@+id/tv_main_display"
+        android:layout_below="@+id/textView4"
+        android:layout_marginTop="22dp" />
 
     <TextView
         android:id="@+id/textView6"
@@ -99,12 +96,11 @@
         android:id="@+id/tv_main_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_below="@+id/textView6"
+        android:layout_alignEnd="@+id/tv_main_ssid"
         android:layout_alignLeft="@+id/tv_main_ssid"
-        android:layout_alignStart="@+id/tv_main_ssid"
         android:layout_alignRight="@+id/tv_main_ssid"
-        android:layout_alignEnd="@+id/tv_main_ssid" />
+        android:layout_alignStart="@+id/tv_main_ssid"
+        android:layout_below="@+id/textView6" />
 
     <TextView
         android:id="@+id/textView8"
@@ -122,11 +118,10 @@
         android:id="@+id/tv_main_httprespone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_below="@+id/textView8"
+        android:layout_alignEnd="@+id/tv_main_level"
         android:layout_alignLeft="@+id/tv_main_level"
-        android:layout_alignStart="@+id/tv_main_level"
         android:layout_alignRight="@+id/tv_main_level"
-        android:layout_alignEnd="@+id/tv_main_level" />
+        android:layout_alignStart="@+id/tv_main_level"
+        android:layout_below="@+id/textView8" />
 
 </RelativeLayout>
