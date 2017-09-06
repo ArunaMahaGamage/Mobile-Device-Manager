@@ -144,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
         int rssi = wifiManager.getConnectionInfo().getRssi();
         mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
 
-            if ((mWifiLevel > 0)) {
-
                 rssi = wifiManager.getConnectionInfo().getRssi();
                 mWifiLevel = WifiManager.calculateSignalLevel(rssi, 5);
 
@@ -155,19 +153,20 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
 
                 if (mWifiLevel <= 3) {
+                    mDisplayMessage.setText("");
                     mDisplaySSID.setText(mWInfo.getSSID());
                     mDisplaySSIDLevel.setText(new String(String.valueOf(mWifiLevel)));
-                } else if(mWifiLevel <= 2) {
+                }
+                if((mWifiLevel <= 2)) {
                     Toast.makeText(getApplicationContext(), "Please leave phone on bed",
                             Toast.LENGTH_LONG).show();
                     mDisplayMessage.setText("Please leave phone on bed");
-                } else {
+                } else if (mWifiLevel == 0){
                     mDisplayMessage.setText("");
                     mDisplaySSID.setText("");
                     mDisplaySSIDLevel.setText("");
                 }
 
-            }
         sentDataToAPILogic();
     }
 
@@ -203,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
     public void sentDataToAPILogic() {
 
 
-            if (mBetteryLevel <= 100) {
+            if (mBetteryLevel <= 20) {
                 if (mWifiLevel <= 2) {
                     new DataToAPI(this).execute(mBetteryLevel, "Low Bettery", mWInfo.getSSID(), mWifiLevel, "In range", mHttpState, mMacAddress, mIpAddress);
                 } else {
